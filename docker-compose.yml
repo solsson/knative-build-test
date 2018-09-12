@@ -1,0 +1,19 @@
+# Testing kaniko compatibility using local docker
+version: '2'
+services:
+
+  registry:
+    image: registry:2.6.2@sha256:672d519d7fd7bbc7a448d17956ebeefe225d5eb27509d8dc5ce67ecb4a0bce54
+    ports:
+    - "5000:5000"
+
+  build-and-push:
+    image: gcr.io/kaniko-project/executor@sha256:413fe14232a5f37f02a57758fe891993df3d58114ed948b00c9b044ed2f05f45
+    volumes:
+    # Change to . as mount source if your docker setup supports it
+    - /tmp/knative-build-test:/tmp/knative-build-test
+    command:
+    - --context=/tmp/knative-build-test/dockerfile-with-run
+    - --destination=registry:5000/knative-build-test/dockerfile-with-run
+    - --insecure
+    - --verbosity=debug
